@@ -1,0 +1,50 @@
+from faker import Faker 
+from faker.providers import BaseProvider
+import numpy as np
+import pandas as pd
+import random
+fake = Faker('fa_IR')
+class builder(BaseProvider):
+    my_tag = [
+        'programmer','python','c#',
+        'accounting system','excel','music',
+        'football','painting','writing',
+        'web socket','database','no_sql','redis' ]
+    
+    def b_company(self, num):
+        if hasattr(self, 'company'):
+            print("Company Dataset Is Exist... ")
+        else:
+            _dic = {}
+            c_list = [fake.unique.company() for i in range(num)]
+            for index, value in enumerate(c_list):
+                _dic[index + 9090] = value
+            self.company = _dic
+            return self.company
+
+    def b_profile(self, num):
+        pr = []
+        for con in range(num):
+            info = fake.profile()
+            info['company_code'], info['company'] = random.choice(list(self.company.items()))[0] ,random.choice(list(self.company.items()))[1]
+            info['code'] = 1000 + con
+            info['firsta_name'] = fake.first_name()
+            info['last_name'] = fake.last_name()
+            info['mobile'] = fake.phone_number()
+            info['profile_pic'] = fake.image_url()
+            info['tag'] = fake.sentence(ext_word_list=self.my_tag)
+            info['tag'] = fake.emoji()
+            del info['name']
+            pr.append(info)
+        return pr
+
+    def get_company(self):
+        return self.company
+    
+    def get_company(self):
+        return self.company
+     
+fake.add_provider(builder)
+fake.b_company(3)
+da = fake.b_profile(5)
+pd.DataFrame(da)
